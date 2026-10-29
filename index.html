@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restream Rust ⚡ Ultra-Low RAM RTMP Fan-out & Stream HUD Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card-bg: rgba(22, 27, 34, 0.85);
+      --card-border: rgba(48, 54, 61, 0.8);
+      --accent: #238636;
+      --accent-glow: rgba(35, 134, 54, 0.4);
+      --text: #f0f6fc;
+      --text-muted: #8b949e;
+      --purple: #a371f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 30px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container { max-width: 900px; width: 100%; }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 20px;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    p.sub { color: var(--text-muted); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .card h3 { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+    .card .val { font-size: 24px; font-weight: 700; color: #58a6ff; font-family: 'JetBrains Mono', monospace; }
+    .targets-list { list-style: none; margin-top: 10px; }
+    .targets-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: rgba(13, 17, 23, 0.7);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    .status-dot { color: #3fb950; font-weight: bold; }
+    .footer { text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 40px; }
+    .footer a { color: #58a6ff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="badge">NATIVE RUST ZERO-GC</span>
+      <h1>Restream Rust Engine</h1>
+      <p class="sub">Ultra-Low Footprint (< 20MB RAM) RTMP Fan-out Relay & HUD Telemetry Engine</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Consumo de Memória</h3>
+        <div class="val" id="ram">~18.8 MB</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Redução de ~80% vs Go</p>
+      </div>
+      <div class="card">
+        <h3>Pipeline de Vídeo</h3>
+        <div class="val" id="res">720p @ 10 FPS</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Zero-Copy Stdin Pipe na RAM</p>
+      </div>
+      <div class="card">
+        <h3>Áudio Lo-Fi 24/7</h3>
+        <div class="val" style="color: #bc8cff;">Nightwave Plaza</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Reconexão com buffer circular</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Destinos de Fan-out RTMP Ativos</h3>
+      <ul class="targets-list">
+        <li><span>🟣 Twitch (rtmp://live.twitch.tv/app)</span> <span class="status-dot">ATIVO ●</span></li>
+        <li><span>🟢 Kick (rtmps://fa723fc1b171.global-contribute.live-video.net)</span> <span class="status-dot">ATIVO ●</span></li>
+        <li><span>🔴 YouTube (rtmp://a.rtmp.youtube.com/live2)</span> <span class="status-dot">ATIVO ●</span></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      Integrado ao <a href="https://kbelludoo.github.io/bot-template-rust/">Bot Hub VPS Command Center</a> • Solo Agent Architecture
+    </div>
+  </div>
+</body>
+</html>
