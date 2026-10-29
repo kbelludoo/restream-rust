@@ -35,7 +35,7 @@ impl Default for RestreamConfig {
     fn default() -> Self {
         Self {
             ingest_port: 1935,
-            web_port: 3008,
+            web_port: 3011,
             targets: vec![
                 TargetConfig {
                     name: "Twitch".into(),
@@ -100,6 +100,51 @@ async fn telemetry_handler(State(state): State<Arc<AppState>>) -> impl IntoRespo
     })
 }
 
+#[derive(Serialize)]
+pub struct StatusResponse {
+    pub name: &'static str,
+    pub game: &'static str,
+    pub engine: &'static str,
+    pub port: u16,
+    pub online: bool,
+    pub uptime_seconds: u64,
+    pub frames_emitted: u64,
+    pub active_accounts: u32,
+    pub total_gold: u64,
+    pub total_exp: u64,
+    pub total_stamina: u32,
+    pub total_kills: u64,
+    pub targets: Vec<String>,
+    pub timestamp: String,
+}
+
+async fn status_handler(State(state): State<Arc<AppState>>) -> impl IntoResponse {
+    let targets = state
+        .config
+        .targets
+        .iter()
+        .filter(|t| t.enabled)
+        .map(|t| format!("{} (active)", t.name))
+        .collect();
+
+    Json(StatusResponse {
+        name: "⚡ Restream Rust Engine",
+        game: "Restream Relay & HUD",
+        engine: "Native Rust Zero-GC (< 5MB RAM)",
+        port: state.config.web_port,
+        online: true,
+        uptime_seconds: state.start_time.elapsed().as_secs(),
+        frames_emitted: state.frames_emitted.load(Ordering::Relaxed),
+        active_accounts: 3,
+        total_gold: 0,
+        total_exp: 0,
+        total_stamina: 100,
+        total_kills: 0,
+        targets,
+        timestamp: Utc::now().to_rfc3339(),
+    })
+}
+
 async fn index_handler() -> Html<&'static str> {
     Html(r#"<!DOCTYPE html>
 <html>
@@ -145,7 +190,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("             Kick + Twitch + YouTube • Zero Buffer Bloat • < 5MB RAM            ");
     info!("================================================================================");
 
-    let config = RestreamConfig::default();
+    let mut config = RestreamConfig::default();
+    if let Ok(port_str) = std::env::var("PORT") {
+        if let Ok(p) = port_str.parse::<u16>() {
+            config.web_port = p;
+        }
+    }
+
     let state = Arc::new(AppState {
         start_time: Instant::now(),
         frames_emitted: AtomicU64::new(0),
@@ -155,6 +206,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = Router::new()
         .route("/", get(index_handler))
         .route("/api/telemetry", get(telemetry_handler))
+        .route("/api/status", get(status_handler))
         .with_state(state.clone());
 
     let web_port = config.web_port;
